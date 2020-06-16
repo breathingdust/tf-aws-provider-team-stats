@@ -1,0 +1,12 @@
+name: 'Terraform AWS Provider Team Stats'
+description: 'Pulls useful info for use in reporting/slack/etc...'
+inputs:
+  team-name: @terraform-providers/aws-provider
+    description: 'Which team to pull stats for'
+    required: true
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'node12'
+  main: 'index.js'
