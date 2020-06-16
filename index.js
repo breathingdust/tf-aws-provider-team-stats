@@ -10,7 +10,7 @@ async function main(){
         team_slug: "aws-provider"
     });
 
-    console.log(`Found ${membersResponse.data.length} memmbers`)
+    core.info(`Found ${membersResponse.data.length} memmbers`)
     
     const searchQueries = membersResponse.data.map(async member => {
             const response = await octokit.search.issuesAndPullRequests({
