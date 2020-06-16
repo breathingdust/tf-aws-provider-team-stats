@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 async function main(){
-    const token = core.getInput('githubtoken');
+    const token = core.getInput('token');
     let octokit = github.getOctokit(token);
         
     let membersResponse = await octokit.teams.listMembersInOrg({
