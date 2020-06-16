@@ -1,7 +1,7 @@
 name: 'Terraform AWS Provider Team Stats'
 description: 'Pulls useful info for use in reporting/slack/etc...'
 inputs:
-  token: ${{ secrets.GITHUB_TOKEN }}
+  token: ${{ secrets.MY_GITHUB_TOKEN }}
     description: 'A valid github token for the organization'
     required: true
 outputs:
