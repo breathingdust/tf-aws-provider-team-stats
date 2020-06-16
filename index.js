@@ -32,6 +32,8 @@ async function main(){
         var nameB = b.member.toUpperCase();
         return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
     });  
+
+    core.setOutput("stats",searchResults);
 }
 
 try{
