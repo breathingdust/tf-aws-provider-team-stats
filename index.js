@@ -33,7 +33,7 @@ async function main(){
         return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
     });  
 
-    core.setOutput("stats",searchResults);
+    core.setOutput("stats",JSON.stringify(searchResults));
 }
 
 try{
