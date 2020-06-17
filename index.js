@@ -10,7 +10,7 @@ async function main(){
         team_slug: "aws-provider"
     });
 
-    core.info(`Found ${membersResponse.data.length} memmbers`)
+    core.info(`Found ${membersResponse.data.length} AWS team members.`)
     
     const searchQueries = membersResponse.data.map(async member => {
             const response = await octokit.search.issuesAndPullRequests({
@@ -33,7 +33,9 @@ async function main(){
         return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
     });  
 
-    core.setOutput("stats",JSON.stringify(searchResults));
+    core.info(JSON.stringify(searchResults));
+
+    core.setOutput("stats", JSON.stringify(searchResults));
 }
 
 try{
