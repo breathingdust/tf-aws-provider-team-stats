@@ -3,18 +3,21 @@ const github = require('@actions/github');
 
 async function main(){
     const token = core.getInput('token');
-    let octokit = github.getOctokit(token);
-        
-    let membersResponse = await octokit.teams.listMembersInOrg({
-        org: "terraform-providers",
-        team_slug: "aws-provider"
+    const org = core.getInput('org');
+    const teamSlug = core.getInput('team_slug');
+
+    const octokit = github.getOctokit(token);
+
+    const membersResponse = await octokit.teams.listMembersInOrg({
+        org: org,
+        team_slug: teamSlug
     });
 
     core.info(`Found ${membersResponse.data.length} AWS team members.`)
     
     const searchQueries = membersResponse.data.map(async member => {
             const response = await octokit.search.issuesAndPullRequests({
-                q : `is:pr is:open author:${member.login} draft:false org:terraform-providers`
+                q : `is:pr is:open author:${member.login} draft:false org:${org}`
             });
 
             const result = {
@@ -33,9 +36,13 @@ async function main(){
         return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
     });  
 
-    core.info(JSON.stringify(searchResults));
-
     core.setOutput("stats", JSON.stringify(searchResults));
+
+    let stats_message = `Open Pull Requests for ${org}/${teamSlug}: `
+
+    searchResults.map(member => stats_message+= `${member.member} ${member.count} `);
+
+    core.setOutput("stats_message",stats_message);
 }
 
 try{
