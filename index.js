@@ -1,19 +1,21 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const axios = require('axios')
 
 async function main(){
-    const token = core.getInput('token');
+    const githubToken = core.getInput('github_token');
     const org = core.getInput('org');
     const teamSlug = core.getInput('team_slug');
-
-    const octokit = github.getOctokit(token);
+    const slackToken = core.getInput('slack_token');
+    const slackChannel = core.getInput('slack_channel');
+    const octokit = github.getOctokit(token);   
 
     const membersResponse = await octokit.teams.listMembersInOrg({
         org: org,
         team_slug: teamSlug
     });
 
-    core.info(`Found ${membersResponse.data.length} AWS team members.`)
+    core.info(`Found ${membersResponse.data.length} AWS team members.`);
     
     const searchQueries = membersResponse.data.map(async member => {
             const response = await octokit.search.issuesAndPullRequests({
@@ -42,30 +44,44 @@ async function main(){
 
     searchResults.map(member => memberLines+= `<https://github.com/search?q=org:terraform-providers+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`);
 
-    let blocks = [
+    let postMessageBody = {
+        channel: slackChannel,
+        text: "hi",
+        blocks: [
             {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": ""
+                type: "section",
+                text: {
+                    type: "mrkdwn",
+                    text: `Open Pull Requests for *Organization:* ${org} *Team:* ${teamSlug}`
                 }
             },
             {
-                "type": "divider"
+                type: "divider"
             },
             {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": ""
+                type: "section",
+                text: {
+                    type: "mrkdwn",
+                    text: memberLines
                 }
             }
-        ];
+        ]
+    };
 
-    blocks[0].text.text = `Open Pull Requests:\n*Organization:* ${org} *Team:* ${teamSlug}`;
-    blocks[2].text.text = memberLines;
-
-    core.setOutput("stats_message", encodeURIComponent(JSON.stringify(blocks)));
+    axios({
+        method: 'post',
+        url: 'https://slack.com/api/chat.postMessage',
+        headers: {'Authorization': `Bearer ${slackToken}`},
+        data: postMessageBody
+        })
+      .then((res) => {
+        core.info(`Slack Response: ${res.statusCode}`)
+        console.log(res)
+        core.info(res.data);
+      })
+      .catch((error) => {
+        core.error(error)
+      })
 }
 
 try{

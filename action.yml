@@ -1,7 +1,7 @@
-name: 'Github Orgnization Team Member PR Summary'
+name: 'Github Team Open PR Summary'
 description: 'Open PR counts for team members in specified org/team'
 inputs:
-  token:
+  github_token:
     description: 'A valid github token for the organization'
     required: true
   org:
@@ -10,11 +10,15 @@ inputs:
   team_slug:
     description: The team slug whose members you want to information for.
     required: true
+  slack_token:
+    description: A bot token with the correct scope
+    required: true
+  slack_channel:
+    description: Channel identifier
+    required: true
 outputs:
   stats:
     description: 'json object describing results.'
-  stats_message:
-    description: 'Single line message to summarize status for team members.'
 runs:
   using: 'node12'
   main: 'index.js'
