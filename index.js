@@ -47,7 +47,7 @@ async function main() {
 
   let memberLines = '';
 
-  searchResults.foreach((member) => { memberLines += `<https://github.com/search?q=org:terraform-providers+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`; });
+  searchResults.forEach((member) => { memberLines += `<https://github.com/search?q=org:terraform-providers+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`; });
 
   const postMessageBody = {
     channel: slackChannel,
