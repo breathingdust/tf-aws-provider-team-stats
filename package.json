@@ -1,5 +1,5 @@
 {
-  "name": "tf-aws-provider-team-stats",
+  "name": "github-team-slackbot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,18 +8,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/breathingdust/tf-aws-provider-team-stats.git"
+    "url": "git+https://github.com/breathingdust/github-team-slackbot.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/breathingdust/tf-aws-provider-team-stats/issues"
+    "url": "https://github.com/breathingdust/github-team-slackbot/issues"
   },
-  "homepage": "https://github.com/breathingdust/tf-aws-provider-team-stats#readme",
+  "homepage": "https://github.com/breathingdust/github-team-slackbot#readme",
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "@actions/github": "^3.0.0"
+    "@actions/github": "^3.0.0",
+    "axios": "^0.19.2"
   },
   "devDependencies": {
     "eslint": "^7.2.0",
