@@ -2,11 +2,11 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 async function main(){
-     const token = core.getInput('token');
-     const org = core.getInput('org');
-     const teamSlug = core.getInput('team_slug');
+    const token = core.getInput('token');
+    const org = core.getInput('org');
+    const teamSlug = core.getInput('team_slug');
 
-     const octokit = github.getOctokit(token);
+    const octokit = github.getOctokit(token);
 
     const membersResponse = await octokit.teams.listMembersInOrg({
         org: org,
@@ -40,11 +40,32 @@ async function main(){
 
     let memberLines = ""
 
-    searchResults.map(member => memberLines+= `<https://github.com/search?q=org%3Aterraform-providers+author%3A${member.member}+is%3Apr+is%3Aopen+draft%3Afalse|${member.member}> : ${member.count}\n`);
+    searchResults.map(member => memberLines+= `<https://github.com/search?q=org:terraform-providers+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`);
 
-    let block_message = `{"blocks": [{"type": "section","text": {"type": "mrkdwn","text": "Open Pull Requests:\n*Organization:* ${org} *Team:* ${teamSlug}"}},{"type": "divider"},{"type": "section","text": {"type": "mrkdwn","text": "${memberLines}"}}]}`;
+    let blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": ""
+                }
+            },
+            {
+                "type": "divider"
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": ""
+                }
+            }
+        ];
 
-    core.setOutput("stats_message", encodeURIComponent(block_message));
+    blocks[0].text.text = `Open Pull Requests:\n*Organization:* ${org} *Team:* ${teamSlug}`;
+    blocks[2].text.text = memberLines;
+
+    core.setOutput("stats_message", encodeURIComponent(JSON.stringify(blocks)));
 }
 
 try{
