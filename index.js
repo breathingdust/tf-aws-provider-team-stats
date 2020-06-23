@@ -10,10 +10,15 @@ async function main() {
   const slackChannel = core.getInput('slack_channel');
   const octokit = github.getOctokit(githubToken);
 
-  const membersResponse = await octokit.teams.listMembersInOrg({
-    org,
-    team_slug: teamSlug,
-  });
+  let membersResponse = [];
+  try {
+    membersResponse = await octokit.teams.listMembersInOrg({
+      org,
+      team_slug: teamSlug,
+    });
+  } catch (error) {
+    core.setFailed(`Getting members for '${org}' failed with error ${error}`);
+  }
 
   core.info(`Found ${membersResponse.data.length} AWS team members.`);
 
@@ -28,7 +33,12 @@ async function main() {
     };
   });
 
-  const searchResults = await Promise.all(searchQueries);
+  let searchResults = [];
+  try {
+    searchResults = await Promise.all(searchQueries);
+  } catch (error) {
+    core.setFailed(`Getting search results failed with error ${error}`);
+  }
 
   searchResults.sort((a, b) => {
     const nameA = a.member.toUpperCase();
@@ -47,11 +57,10 @@ async function main() {
 
   let memberLines = '';
 
-  searchResults.forEach((member) => { memberLines += `<https://github.com/search?q=org:terraform-providers+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`; });
+  searchResults.forEach((member) => { memberLines += `<https://github.com/search?q=org:${org}+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`; });
 
   const postMessageBody = {
     channel: slackChannel,
-    text: 'hi',
     blocks: [
       {
         type: 'section',
@@ -84,7 +93,7 @@ async function main() {
       core.info(res.data);
     })
     .catch((error) => {
-      core.error(error);
+      core.setFailed(`Posting to slack failed with error ${error}`);
     });
 }
 
