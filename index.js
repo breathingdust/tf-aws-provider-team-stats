@@ -5,9 +5,11 @@ const axios = require('axios');
 async function main() {
   const githubToken = core.getInput('github_token');
   const org = core.getInput('org');
+  const repo = core.getInput('repo');
   const teamSlug = core.getInput('team_slug');
   const slackToken = core.getInput('slack_token');
   const slackChannel = core.getInput('slack_channel');
+
   const octokit = github.getOctokit(githubToken);
 
   let membersResponse = [];
@@ -24,7 +26,7 @@ async function main() {
 
   const searchQueries = membersResponse.data.map(async (member) => {
     const response = await octokit.search.issuesAndPullRequests({
-      q: `is:pr is:open author:${member.login} draft:false org:${org}`,
+      q: `is:pr is:open author:${member.login} draft:false repo:${org}/${repo}`,
     });
 
     return {
@@ -66,7 +68,7 @@ async function main() {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Open Pull Requests for *Organization:* ${org} *Team:* ${teamSlug}`,
+          text: `Open Pull Requests in *${org}/${repo}* :rocket:`,
         },
       },
       {
