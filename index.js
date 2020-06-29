@@ -59,7 +59,7 @@ async function main() {
 
   let memberLines = '';
 
-  searchResults.forEach((member) => { memberLines += `<https://github.com/search?q=org:${org}+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`; });
+  searchResults.forEach((member) => { memberLines += `<https://github.com/search?q=repo:${org}/${repo}+author:${member.member}+is:pr+is:open+draft:false|${member.member}> : ${member.count}\n`; });
 
   const postMessageBody = {
     channel: slackChannel,
